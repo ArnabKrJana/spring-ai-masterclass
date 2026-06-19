@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: lecture-01-ollama-local-llm
+
+  ai:
+    ollama:
+      # Explicitly points to your local Ollama server running on your machine
+      base-url: http://localhost:11434
+      chat:
+        options:
+          # Tells Spring AI to use your local Gemma model
+          model: gemma4:e2b
+#          model: qwen3.5:4b
+logging:
+  level:
+    # Enables the request/response logs for the advisor
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: DEBUG

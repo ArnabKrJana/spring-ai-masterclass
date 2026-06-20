@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: chat-memory-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=ai_chat_memory_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - TZ=Asia/Kolkata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d ai_chat_memory_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  postgres_data:

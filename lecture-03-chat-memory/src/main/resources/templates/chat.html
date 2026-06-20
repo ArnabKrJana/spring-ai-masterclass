@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring AI Chat Memory Test</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding-top: 50px; }
+        .chat-container { width: 500px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; }
+        #chat-box { height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #fafafa; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 14px; border-radius: 15px; max-width: 75%; line-height: 1.4; }
+        .user-msg { background-color: #007bff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai-msg { background-color: #e2e2e2; color: black; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .input-area { display: flex; gap: 10px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        button { background-color: #007bff; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        .loading { align-self: flex-start; font-style: italic; color: #888; font-size: 0.9em; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <h2 style="text-align: center; margin-top: 0;">In-Memory Chat</h2>
+
+    <div id="chat-box">
+    </div>
+    <div id="loading-indicator" class="loading">AI is thinking...</div>
+
+    <div class="input-area">
+        <input type="text" id="promptInput" placeholder="Type your message..." onkeypress="handleEnter(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const inputField = document.getElementById('promptInput');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    // 1. Generate a unique session ID once when the page first loads
+    // crypto.randomUUID() is built into modern browsers!
+    const currentSessionId = crypto.randomUUID();
+
+    function handleEnter(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    async function sendMessage() {
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user-msg');
+        inputField.value = '';
+        loadingIndicator.style.display = 'block';
+
+        try {
+            const response = await fetch('/chat-memory/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: text,
+                    // 2. Include the session ID in every request!
+                    conversationId: currentSessionId
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                appendMessage(data.content, 'ai-msg');
+            } else {
+                appendMessage("Error: Could not connect to the server.", 'ai-msg');
+            }
+        } catch (error) {
+            appendMessage("Error: " + error.message, 'ai-msg');
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+
+    function appendMessage(text, className) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'msg ' + className;
+        msgDiv.textContent = text;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

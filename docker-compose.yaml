@@ -43,5 +43,20 @@ services:
       timeout: 5s
       retries: 5
 
+  redis-vector-db:
+    image: redis/redis-stack-server:7.4.0-v8
+    container_name: rag-redis-stack
+    restart: always
+    ports:
+      - "6379:6379"   # Default Redis data port
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   pgvector_data:
+  redis_data:

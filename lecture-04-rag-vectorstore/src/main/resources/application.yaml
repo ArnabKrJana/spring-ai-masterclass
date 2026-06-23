@@ -2,40 +2,44 @@ spring:
   application:
     name: lecture-04-rag-vectorstore
 
-  # Pointing to the new vector_db with your timezone appended
+  # 1. Postgres Connection (Required for JDBC Chat Memory)
   datasource:
     url: jdbc:postgresql://localhost:5432/vector_db?timezone=Asia/Kolkata
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
 
+  # 2. Redis Connection (Required for Vector Store)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
   ai:
     ollama:
       base-url: http://localhost:11434
-      # 1. The Chat Model (used to generate the final text answer)
+      # The Chat Model (used to generate the final text answer)
       chat:
         options:
           model: gemma4:e2b
-
-      # 2. The Embedding Model (used to convert documents into math vectors)
+      # The Embedding Model (used to convert documents into math vectors)
       embedding:
         options:
           model: nomic-embed-text:latest
+
     chat:
       memory:
         repository:
           jdbc:
             initialize-schema: always
+
     # 3. Vector Store Configuration
     vectorstore:
-      pgvector:
-        # FIXED: Changed from 'always' to 'true' because pgvector expects a boolean
+      redis:
+        # Automatically creates the RediSearch index
         initialize-schema: true
-        # Crucial: nomic-embed-text outputs exactly 768 dimensions.
-        # If this isn't here, Postgres will crash expecting 1536.
-        dimensions: 768
-        # Hierarchical Navigable Small World (A highly efficient search algorithm)
-        index-type: HNSW
+        index-name: spring-ai-index
+        prefix: "embedding:"
 
 logging:
   level:

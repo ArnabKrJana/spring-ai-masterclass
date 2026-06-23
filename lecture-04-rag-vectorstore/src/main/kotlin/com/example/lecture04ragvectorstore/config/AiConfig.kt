@@ -10,13 +10,14 @@ import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfi
 import org.springframework.ai.transformer.splitter.TokenTextSplitter
 import org.springframework.ai.vectorstore.SimpleVectorStore
 import org.springframework.ai.vectorstore.VectorStore
-import org.springframework.ai.vectorstore.pgvector.PgVectorStore
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.io.Resource
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.jdbc.core.JdbcTemplate
 
 @Configuration
@@ -68,6 +69,11 @@ class AiConfig(
         vectorStore.accept(splitDocuments)
         logger.info("Documents {} loaded into vector store", resource.filename)
 
+    }
+
+    @Bean
+    fun providesJedisConnectionFactory(): JedisConnectionFactory {
+        return JedisConnectionFactory()
     }
 
 }

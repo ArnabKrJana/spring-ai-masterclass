@@ -26,20 +26,23 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    // Chat Memory
     implementation("org.springframework.ai:spring-ai-starter-model-chat-memory-repository-jdbc")
-// Source: https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-advisors-vector-store
+// Advisor
     implementation("org.springframework.ai:spring-ai-advisors-vector-store:2.0.0-M8")
     // LLM & Embedding Model
     implementation("org.springframework.ai:spring-ai-starter-model-ollama")
 
     // PGVector
-    implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
+//    implementation("org.springframework.ai:spring-ai-starter-vector-store-pgvector")
 
     // Document Readers
     implementation("org.springframework.ai:spring-ai-pdf-document-reader")
     implementation("org.springframework.ai:spring-ai-markdown-document-reader")
-
+// Vectorstore
+    implementation("org.springframework.ai:spring-ai-starter-vector-store-redis")
     runtimeOnly("org.postgresql:postgresql")
+
 
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 

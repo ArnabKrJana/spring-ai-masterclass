@@ -20,7 +20,7 @@ spring:
     # 2. Global Spring AI Chat Memory configuration
     chat:
       memory:
-        repository:  # <--- THIS IS THE BLOCK I ACCIDENTALLY REMOVED!
+        repository:
           jdbc:
             initialize-schema: always
 

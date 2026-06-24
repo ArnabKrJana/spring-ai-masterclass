@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: lecture-05-tool-calling
+
+  # 1. Postgres Connection (Required for JDBC Chat Memory)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vector_db?timezone=Asia/Kolkata
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      # The Chat Model (used to generate the final text answer)
+      chat:
+        options:
+          model: gemma4:e2b
+      # The Embedding Model (used to convert documents into math vectors)
+      embedding:
+        options:
+          model: nomic-embed-text:latest
+
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+
+    # 3. Vector Store Configuration
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        dimensions: 768
+        index-type: HNSW
+
+logging:
+  level:
+    org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor: DEBUG
+
+app:
+  weather:
+    api-key: ${WEATHER_API_KEY}
